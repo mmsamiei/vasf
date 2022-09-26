@@ -1,4 +1,4 @@
-from torch.utils.data import IterableDataset
+from torch.utils.data import IterableDataset, DataLoader
 import numpy as np
 from utils import utils
 import random
@@ -30,3 +30,9 @@ class RectanglesDataset(IterableDataset):
     def __iter__(self):
         while(True):
             yield self.generate_observation()
+
+class RectanglesDataLoader(DataLoader):
+
+    def __init__(self, image_shape, interval_num_obj, interval_rect_size, batch_size, num_workers=1):
+        self.dataset = RectanglesDataset(image_shape, interval_num_obj, interval_rect_size)
+        super().__init__(self.dataset, batch_size=batch_size, num_workers=num_workers)
