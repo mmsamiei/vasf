@@ -25,7 +25,7 @@ class RectanglesDataset(IterableDataset):
             image[0, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
             image[1, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
             image[2, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
-        return image
+        return {'images': image}
 
     def __iter__(self):
         while(True):
