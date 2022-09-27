@@ -21,12 +21,20 @@ class RectanglesDataset(IterableDataset):
         image[2] = random.uniform(-1, 1)
         num_obj = random.randint(*self.interval_num_obj)
         for i in range(num_obj):
-            rect_size = random.randint(5,12)
+            rect_size = random.randint(*self.interval_rect_size)
             x, y = random.randint(0,self.image_shape[1]-rect_size), random.randint(0,self.image_shape[2]-rect_size)
             image[0, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
             image[1, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
             image[2, x:x+rect_size, y:y+rect_size] = random.uniform(-1, 1)
         return {'images': image}
+    
+    def set_attrs(self, image_shape=None, interval_num_obj=None, interval_rect_size=None):
+        if image_shape is not None:
+            self.image_shape = (3, image_shape[0], image_shape[1])
+        if interval_num_obj is not None:
+            self.interval_num_obj = interval_num_obj
+        if interval_rect_size is not None:
+            self.interval_rect_size = interval_rect_size
 
     def __iter__(self):
         while(True):
@@ -39,3 +47,6 @@ class RectanglesDataLoader(DataLoader):
         super().__init__(self.dataset, batch_size=batch_size, num_workers=num_workers)
 
         ##TODO TRANSFORM ON DATALOADER
+    
+    def set_attrs(self, image_shape=None, interval_num_obj=None, interval_rect_size=None):
+        self.dataset.set_attrs(image_shape, interval_num_obj, interval_rect_size)
