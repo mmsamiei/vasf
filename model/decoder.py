@@ -43,6 +43,7 @@ class ImageGenerator(nn.Module):
         recon_combined = torch.sum(recons * masks, dim=1)
         result = {
             'output': recon_combined,
+            'token_outputs': recons,
             'masks': masks
         }
         return result

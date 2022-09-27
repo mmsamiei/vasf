@@ -26,7 +26,7 @@ class AutoregressiveDescriptor(nn.Module):
         tgt = tgt[:,1:,:]
         tgt = self.output_embedding(tgt)
         result = {
-            'tokens' : tgt
+            'tokens' : tgt,
         }
         return result
     
