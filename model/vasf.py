@@ -11,16 +11,15 @@ class Vasf(nn.Module):
         _, _, h, w = x.shape
         feature_map = self.feature_extractor(x)
         descriptor_result = self.descriptor(feature_map, dsc_len)
-        descriptor_commit_loss = descriptor_result.get('commitment_loss',0)
+        descriptor_commit_loss = descriptor_result.get('commitment_loss',None)
         descriptor_output_mask = descriptor_result.get('mask',None)
         descriptor_tokens = descriptor_result['tokens']
         decoder_result = self.decoder_model(descriptor_tokens, image_size=(h,w), token_mask=descriptor_output_mask)
-        """
         result = {
-            'output': recon_combined,
-            'token_outputs': recons,
-            'masks': masks
+            'commit_loss': descriptor_commit_loss,
+            'output': decoder_result['output'],
+            'token_outputs': decoder_result['token_outputs'],
+            'masks': decoder_result['masks']
         }
-        """
-        return decoder_result
+        return result
         

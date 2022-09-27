@@ -13,8 +13,10 @@ class SimpleTrainer(BaseTrainer):
         for i, batch in enumerate(self.train_dl):
             images = batch['images'].float()
             self.optimizer.zero_grad()
-            reconstructed = self.model.reconstruct(images, 2)['output']
-            loss = self.criterion(reconstructed, images)
+            vasf_result = self.model.reconstruct(images, 2)
+            commit_loss = vasf_result['commit_loss'].mean()
+            reconstructed = vasf_result['output']
+            loss = self.criterion(reconstructed, images) + commit_loss
             loss.backward()
             self.optimizer.step()
             if i == num_iter:

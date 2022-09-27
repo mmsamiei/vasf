@@ -55,7 +55,7 @@ class AutoregressiveMaskedDescriptor(nn.Module):
             mask[:, i:] = mask[:, i:] * last_token_is_valid
             tgt = torch.cat([tgt, last_token], dim=1)
         last_token = self.transformer(src, tgt)[:,-1:,:]
-        commitment_loss = (last_token-self.end_token).norm(dim=-1)
+        commitment_loss = (last_token-self.end_token)
         tgt = tgt[:,1:,:]
         tgt = self.output_embedding(tgt)
         result = {
