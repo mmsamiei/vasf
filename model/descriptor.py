@@ -42,7 +42,7 @@ class AutoregressiveMaskedDescriptor(nn.Module):
 
     def forward(self, x, description_length, threshold=1):
         ## [batch, w, h, dim] -> [batch, l, dim]
-        mask = torch.ones((x.shape[0], description_length))
+        mask = torch.ones((x.shape[0], description_length), device=next(self.parameters()).device)
         temp = x
         temp = einops.rearrange(temp, 'b w h d -> b (w h) d')
         temp = self.input_embedding(temp)

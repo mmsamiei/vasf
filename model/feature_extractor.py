@@ -24,6 +24,6 @@ class CNNFeatureExtractor(nn.Module):
         temp = self.conv0(x)
         temp = self.encoder(temp) # [b d h w]
         _, c, h, w = temp.shape
-        temp = temp + utils.positionalencoding2d(c, h, w)
+        temp = temp + utils.positionalencoding2d(c, h, w).to(next(self.parameters()).device)
         temp = einops.rearrange(temp, 'b c h w -> b h w c')
         return temp
