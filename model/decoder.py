@@ -3,7 +3,7 @@ import einops
 from utils.utils import positionalencoding2d, positionalencoding1d
 from torch.nn import functional as F
 import torch
-
+#
 class ImageGenerator(nn.Module):
     def __init__(self, input_dim, hid_dim, num_layers=2, nhead=8):
         super().__init__()
