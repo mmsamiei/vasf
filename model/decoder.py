@@ -5,7 +5,7 @@ from torch.nn import functional as F
 import torch
 #
 class ImageGenerator(nn.Module):
-    def __init__(self, input_dim, hid_dim, num_layers=2, nhead=8):
+    def __init__(self, input_dim, hid_dim, num_layers=1, nhead=8):
         super().__init__()
         self.input_embedding = nn.Linear(input_dim, hid_dim)
         self.transformer = nn.TransformerEncoder(nn.TransformerEncoderLayer(d_model=hid_dim, nhead=nhead, batch_first=True), num_layers=num_layers)
