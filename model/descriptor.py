@@ -50,7 +50,8 @@ class AutoregressiveMaskedDescriptor(nn.Module):
         start_token = einops.repeat(self.start_token, 'd -> b l d', b=src.shape[0], l=1)
         tgt = start_token
         for i in range(description_length):
-            last_token = self.transformer(src, tgt)[:,-1:,:]
+            tgt_mask = self.transformer.generate_square_subsequent_mask(i+1).to(next(self.parameters()).device)
+            last_token = self.transformer(src, tgt, tgt_mask = tgt_mask)[:,-1:,:]
             last_token_is_valid = (last_token-self.end_token).norm(dim=-1) > threshold
             mask[:, i:] = mask[:, i:] * last_token_is_valid
             tgt = torch.cat([tgt, last_token], dim=1)
