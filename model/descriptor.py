@@ -2,6 +2,7 @@ from torch import nn
 import torch
 import einops 
 
+#
 class AutoregressiveDescriptor(nn.Module):
     def __init__(self, hid_dim, input_dim, output_dim, num_encoder_layers=1, num_decoder_layers=1, dim_feedforward=256, nhead=8):
         super().__init__()
