@@ -41,7 +41,7 @@ class AutoregressiveMaskedDescriptor(nn.Module):
         self.end_token = nn.parameter.Parameter(data=torch.randn(hid_dim), requires_grad=True)
         self.output_embedding = nn.Linear(hid_dim, output_dim)
 
-    def forward(self, x, description_length, threshold=1):
+    def forward(self, x, description_length, threshold=0):
         ## [batch, w, h, dim] -> [batch, l, dim]
         mask = torch.ones((x.shape[0], description_length), device=next(self.parameters()).device)
         temp = x

@@ -15,6 +15,7 @@ class SimpleTrainer(BaseTrainer):
         self.model = self.model.to(dev)
 
     def train(self, num_iter, log_every_step, dsc_len):
+        self.model.train()
         loss_history = []
         for i, batch in tqdm(enumerate(self.train_dl)):
             images = batch['images'].float().to(self.dev)
@@ -35,6 +36,7 @@ class SimpleTrainer(BaseTrainer):
     
 
     def visualization_validation(self):
+        self.model.eval()
         images = next(iter(self.valid_dl))['images'].float().to(self.dev)
         print("correct photo:")
         imsshow(images[:4].cpu(), fig_size=(4.5,3))
