@@ -4,29 +4,63 @@ import torch
 import math 
 
 
-def imshow(img):
+def imshow(img, fig_size=(6,4)):
     """
         numbers are between -1 and 1
         [c, h, w]
     """
     img = img / 2 + 0.5     # unnormalize
     fig, ax = plt.subplots()
+    fig.set_size_inches(fig_size)
     ax.imshow(np.transpose(img, (1, 2, 0)))
     plt.show()
     return fig
 
 
-def imsshow(imgs, fig_size=(6,4)):
+def imsshow(img, fig_size=(6,4)):
+    '''
+        give numpy array
+    '''
+    num_dim = len(img.shape)
+    if num_dim == 3:
+        return imshow(img, fig_size)
+    elif num_dim == 4:
+        return imsshow_4d(img, fig_size)
+    elif num_dim == 5:
+        return imsshow_5d(img, fig_size)
+
+def imsshow_4d(imgs, fig_size=(6,4)):
+    '''
+        [num_img, c, h, w]
+    '''
     num_images = imgs.shape[0]
     fig, ax = plt.subplots(1,num_images)
     fig.set_size_inches(fig_size)
     fig.set_dpi(100)
     for i, img in enumerate(imgs):
         img = img / 2 + 0.5     # unnormalize
-        npimg = img.numpy()
-        ax[i].imshow(np.transpose(npimg, (1, 2, 0)))
+        #npimg = img.numpy()
+        ax[i].imshow(np.transpose(img, (1, 2, 0)))
     plt.show()
     return fig
+
+def imsshow_5d(imgs, fig_size=(6,4)):
+    '''
+        [num_rows, num_img, c, h, w]
+    '''
+    num_rows, num_img, c, h, w = imgs.shape
+    fig, ax = plt.subplots(num_rows, num_img)
+    fig.set_size_inches(fig_size)
+    fig.set_dpi(100)
+    for i in range(num_rows):
+        for j in range(num_img):
+            img = imgs[i, j]
+            img = img / 2 + 0.5     # unnormalize
+            #npimg = img.numpy()
+            ax[i][j].imshow(np.transpose(img, (1, 2, 0)))
+    plt.show()
+    return fig
+
 
 
 

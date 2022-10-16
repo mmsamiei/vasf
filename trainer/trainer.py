@@ -41,6 +41,12 @@ class SimpleTrainer(BaseTrainer):
         loger = self.loger
         self.model.eval()
         images = next(iter(self.valid_dl))['images'].float().to(self.dev)
+    
+
+    def _visualization_validation(self):
+        loger = self.loger
+        self.model.eval()
+        images = next(iter(self.valid_dl))['images'].float().to(self.dev)
         print("correct photo:")
         loger.plot(imsshow(images[:4].cpu(), fig_size=(4.5,3)), 'a.png')
         vasf_result = self.model.reconstruct(images, 1)
