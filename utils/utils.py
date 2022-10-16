@@ -7,10 +7,13 @@ import math
 def imshow(img):
     """
         numbers are between -1 and 1
+        [c, h, w]
     """
     img = img / 2 + 0.5     # unnormalize
-    plt.imshow(np.transpose(img, (1, 2, 0)))
+    fig, ax = plt.subplots()
+    ax.imshow(np.transpose(img, (1, 2, 0)))
     plt.show()
+    return fig
 
 
 def imsshow(imgs, fig_size=(6,4)):
@@ -23,6 +26,7 @@ def imsshow(imgs, fig_size=(6,4)):
         npimg = img.numpy()
         ax[i].imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
+    return fig
 
 
 

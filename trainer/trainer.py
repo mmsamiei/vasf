@@ -4,7 +4,7 @@ from tqdm.auto import tqdm
 from utils.utils import imsshow
 import numpy as np
 class SimpleTrainer(BaseTrainer):
-    def __init__(self, train_dl, valid_dl, vasf_model, optimizer, dev):
+    def __init__(self, train_dl, valid_dl, vasf_model, optimizer, dev, loger):
         super().__init__()
         self.train_dl = train_dl
         self.valid_dl = valid_dl
@@ -13,11 +13,13 @@ class SimpleTrainer(BaseTrainer):
         self.optimizer = optimizer
         self.dev = dev
         self.model = self.model.to(dev)
+        self.loger = loger
 
     def train(self, num_iter, log_every_step, dsc_len):
+        loger = self.loger
         self.model.train()
         loss_history = []
-        for i, batch in tqdm(enumerate(self.train_dl)):
+        for i, batch in tqdm(enumerate(self.train_dl), total=num_iter):
             images = batch['images'].float().to(self.dev)
             self.optimizer.zero_grad()
             vasf_result = self.model.reconstruct(images, dsc_len)
@@ -28,7 +30,7 @@ class SimpleTrainer(BaseTrainer):
             self.optimizer.step()
             loss_history.append(loss.item())
             if (i+1) % log_every_step == 0:
-                print(f"iteration {i+1} avg loss: {np.mean(loss_history).round(4)}")
+                loger.print(f"iteration {i+1} avg loss: {np.mean(loss_history).round(4)}")
                 loss_history = []
                 self.visualization_validation()
             if (i+1) == num_iter:
@@ -36,10 +38,11 @@ class SimpleTrainer(BaseTrainer):
     
 
     def visualization_validation(self):
+        loger = self.loger
         self.model.eval()
         images = next(iter(self.valid_dl))['images'].float().to(self.dev)
         print("correct photo:")
-        imsshow(images[:4].cpu(), fig_size=(4.5,3))
+        loger.plot(imsshow(images[:4].cpu(), fig_size=(4.5,3)), 'a.png')
         vasf_result = self.model.reconstruct(images, 1)
         reconstructed = vasf_result['output']
         mse = np.around(self.criterion(reconstructed, images).mean().item(), 4)
