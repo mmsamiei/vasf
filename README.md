@@ -5,4 +5,4 @@
 - [x] Mean of loss in Trainer.Train
 - [ ] Add method to visuallize mask and alpha transparancy
 - [ ] Experiment add commit loss 
-- [x] Show MSE Loss in visuallize
+- [x] Show MSE Loss in visuallize.
