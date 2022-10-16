@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import math 
+from matplotlib import gridspec
 
 
 def imshow(img, fig_size=(6,4)):
@@ -37,6 +38,8 @@ def imsshow_4d(imgs, fig_size=(6,4)):
     fig, ax = plt.subplots(1,num_images)
     fig.set_size_inches(fig_size)
     fig.set_dpi(100)
+    fig.axes.get_xaxis().set_visible(False)
+    fig.axes.get_yaxis().set_visible(False)
     for i, img in enumerate(imgs):
         img = img / 2 + 0.5     # unnormalize
         #npimg = img.numpy()
@@ -44,7 +47,36 @@ def imsshow_4d(imgs, fig_size=(6,4)):
     plt.show()
     return fig
 
-def imsshow_5d(imgs, fig_size=(6,4)):
+
+def imsshow_5d(imgs, fig_size=(4,6)):
+    '''
+        [num_rows, num_img, c, h, w]
+    '''
+    num_rows, num_img, c, h, w = imgs.shape
+    nrow, ncol = num_rows, num_img
+    fig = plt.figure(figsize=(2*(ncol+1), 2*(nrow+1))) 
+    gs = gridspec.GridSpec(nrow, ncol,
+         wspace=0.2, hspace=0.2, 
+         top=1.-0.5/(nrow+1), bottom=0.5/(nrow+1), 
+         left=0.5/(ncol+1), right=1-0.5/(ncol+1)) 
+
+    fig.set_dpi(100)
+    for i in range(num_rows):
+        for j in range(num_img):
+            img = imgs[i, j]
+            img = img / 2 + 0.5     # unnormalize
+            #npimg = img.numpy()
+            ax = plt.subplot(gs[i,j])
+            ax.imshow(np.transpose(img, (1, 2, 0)))
+            ax.set_axis_off()
+            ax.set_xticklabels([])
+            ax.set_yticklabels([])
+
+    plt.show()
+    return fig
+
+
+def _imsshow_5d(imgs, fig_size=(6,4)):
     '''
         [num_rows, num_img, c, h, w]
     '''
@@ -58,10 +90,9 @@ def imsshow_5d(imgs, fig_size=(6,4)):
             img = img / 2 + 0.5     # unnormalize
             #npimg = img.numpy()
             ax[i][j].imshow(np.transpose(img, (1, 2, 0)))
+            ax[i][j].set_axis_off()
     plt.show()
     return fig
-
-
 
 
 def positionalencoding2d(d_model, height, width):

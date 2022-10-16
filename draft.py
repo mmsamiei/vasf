@@ -12,19 +12,19 @@ from utils.utils import positionalencoding1d
 from utils.utils import count_parameters
 import numpy as np
 
-# dev = torch.device('cuda')
-# train_dl = RectanglesDataLoader((32,32),(0,2),(4,10), 128, 1)
-# m1 = feature_extractor.CNNFeatureExtractor(64)
-# m2 = descriptor.AutoregressiveMaskedDescriptor(64, 64, 64)
-# m3 = decoder.ImageGenerator(64, 64)
-# vasf_model = vasf.Vasf(m1, m2, m3).float()
-# loger = logger.Logger('experiments/test')
-# loger.print("number of model parameters: "+str(count_parameters(vasf_model)))
-# optim = torch.optim.Adam(vasf_model.parameters(), lr=3e-5)
-# my_trainer = trainer.SimpleTrainer(train_dl, train_dl, vasf_model, optim, dev, loger)
-# train_dl.set_attrs(None, (0, 2), (14,16))
-# my_trainer.train(300, 25, 3)
+dev = torch.device('cuda')
+train_dl = RectanglesDataLoader((32,32),(0,2),(4,10), 128, 1)
+m1 = feature_extractor.CNNFeatureExtractor(64)
+m2 = descriptor.AutoregressiveMaskedDescriptor(64, 64, 64)
+m3 = decoder.ImageGenerator(64, 64)
+vasf_model = vasf.Vasf(m1, m2, m3).float()
+loger = logger.Logger('experiments/test')
+loger.print("number of model parameters: "+str(count_parameters(vasf_model)))
+optim = torch.optim.Adam(vasf_model.parameters(), lr=3e-5)
+my_trainer = trainer.SimpleTrainer(train_dl, train_dl, vasf_model, optim, dev, loger)
+train_dl.set_attrs(None, (0, 2), (14,16))
+my_trainer.train(1000, 100, 2)
 
-a = torch.rand((3,32,32)).numpy()
-from utils.utils import imsshow
-imsshow(a).savefig('1.png')
+# a = torch.rand((3,32,32)).numpy()
+# from utils.utils import imsshow
+# imsshow(a).titl

@@ -3,6 +3,7 @@ import torch.nn as nn
 from tqdm.auto import tqdm
 from utils.utils import imsshow
 import numpy as np
+from einops import rearrange
 class SimpleTrainer(BaseTrainer):
     def __init__(self, train_dl, valid_dl, vasf_model, optimizer, dev, loger):
         super().__init__()
@@ -32,16 +33,44 @@ class SimpleTrainer(BaseTrainer):
             if (i+1) % log_every_step == 0:
                 loger.print(f"iteration {i+1} avg loss: {np.mean(loss_history).round(4)}")
                 loss_history = []
-                self.visualization_validation()
+                self.visualization_validation(i+1)
             if (i+1) == num_iter:
                 break
     
 
-    def visualization_validation(self):
+    def visualization_validation(self, iter_num):
         loger = self.loger
+        vasf_result = [None]*5
         self.model.eval()
-        images = next(iter(self.valid_dl))['images'].float().to(self.dev)
-    
+        images = next(iter(self.valid_dl))['images'].float().to(self.dev)[:4]
+        for i in range(1,5):
+            vasf_result[i] = self.model.reconstruct(images, i)
+        row_list = [images]
+        mses = []
+        for i in range(1,5):
+            row_list.append(vasf_result[i]['output'])
+            mses.append(np.around(self.criterion(vasf_result[i]['output'], images).mean().item(), 4))
+        graphs = rearrange(row_list, 'r b c h w ->r b c h w')
+        figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
+        figure.suptitle(', '.join(str(x) for x in mses), fontsize=32)
+        loger.plot(figure, f'{iter_num}_a.png')
+
+        row_list = []    
+        for i in range(1,5):
+            for j in range(i):
+                row_list.append(vasf_result[i]['token_outputs'][:,j])
+        graphs = rearrange(row_list, 'r b c h w ->r b c h w')
+        figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
+        loger.plot(figure, f'{iter_num}_b.png')
+
+        row_list = []    
+        for i in range(1,5):
+            for j in range(i):
+                row_list.append(vasf_result[i]['masks'][:,j])
+        graphs = rearrange(row_list, 'r b c h w ->r b c h w')
+        figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
+        loger.plot(figure, f'{iter_num}_c.png')
+
 
     def _visualization_validation(self):
         loger = self.loger

@@ -9,7 +9,6 @@ class Logger():
     
     def print(self, text):
         self.text_file.write(text+"\n")
-        print("hiiii")
         print(text)
     
     def plot(self, fig, path):
