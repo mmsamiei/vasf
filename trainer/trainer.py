@@ -68,7 +68,7 @@ class SimpleTrainer(BaseTrainer):
             for j in range(i):
                 row_list.append(vasf_result[i]['masks'][:,j])
         graphs = rearrange(row_list, 'r b c h w ->r b c h w')
-        figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
+        figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3), mode='01')
         loger.plot(figure, f'{iter_num}_c.png')
 
 

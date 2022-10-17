@@ -5,12 +5,13 @@ import math
 from matplotlib import gridspec
 
 
-def imshow(img, fig_size=(6,4)):
+def imshow(img, fig_size=(6,4), mode='-11'):
     """
         numbers are between -1 and 1
         [c, h, w]
     """
-    img = img / 2 + 0.5     # unnormalize
+    if mode == '-11':
+        img = img / 2 + 0.5 # unnormalize
     fig, ax = plt.subplots()
     fig.set_size_inches(fig_size)
     ax.imshow(np.transpose(img, (1, 2, 0)))
@@ -18,10 +19,12 @@ def imshow(img, fig_size=(6,4)):
     return fig
 
 
-def imsshow(img, fig_size=(6,4)):
+def imsshow(img, fig_size=(6,4), mode='-11'):
     '''
         give numpy array
     '''
+    if mode == '-11':
+        img = img / 2 + 0.5 # unnormalize
     num_dim = len(img.shape)
     if num_dim == 3:
         return imshow(img, fig_size)
@@ -41,7 +44,7 @@ def imsshow_4d(imgs, fig_size=(6,4)):
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
     for i, img in enumerate(imgs):
-        img = img / 2 + 0.5     # unnormalize
+        #img = img / 2 + 0.5     # unnormalize
         #npimg = img.numpy()
         ax[i].imshow(np.transpose(img, (1, 2, 0)))
     plt.show()
@@ -64,7 +67,7 @@ def imsshow_5d(imgs, fig_size=(4,6)):
     for i in range(num_rows):
         for j in range(num_img):
             img = imgs[i, j]
-            img = img / 2 + 0.5     # unnormalize
+            #img = img / 2 + 0.5     # unnormalize
             #npimg = img.numpy()
             ax = plt.subplot(gs[i,j])
             ax.imshow(np.transpose(img, (1, 2, 0)))

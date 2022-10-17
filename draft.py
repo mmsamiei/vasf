@@ -23,7 +23,7 @@ loger.print("number of model parameters: "+str(count_parameters(vasf_model)))
 optim = torch.optim.Adam(vasf_model.parameters(), lr=3e-5)
 my_trainer = trainer.SimpleTrainer(train_dl, train_dl, vasf_model, optim, dev, loger)
 train_dl.set_attrs(None, (0, 4), (12,20))
-my_trainer.train(300000, 2000, 2)
+my_trainer.train(100000, 2000, 2)
 
 # a = torch.rand((3,32,32)).numpy()
 # from utils.utils import imsshow
