@@ -23,10 +23,13 @@ class SimpleTrainer(BaseTrainer):
         for i, batch in tqdm(enumerate(self.train_dl), total=num_iter):
             images = batch['images'].float().to(self.dev)
             self.optimizer.zero_grad()
+            #dsc_len = (i % 2)+1
             vasf_result = self.model.reconstruct(images, dsc_len)
-            commit_loss = vasf_result['commit_loss'].mean()
+            #commit_loss = vasf_result['commit_loss'].mean()
             reconstructed = vasf_result['output']
-            loss = self.criterion(reconstructed, images) + 0*commit_loss
+            loss = self.criterion(reconstructed, images)# + 0*commit_loss
+            if vasf_result['vq_loss'] is not None:
+                loss += vasf_result['vq_loss'].mean()
             loss.backward()
             self.optimizer.step()
             loss_history.append(loss.item())

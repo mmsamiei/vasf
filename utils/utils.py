@@ -70,7 +70,7 @@ def imsshow_5d(imgs, fig_size=(4,6)):
             #img = img / 2 + 0.5     # unnormalize
             #npimg = img.numpy()
             ax = plt.subplot(gs[i,j])
-            ax.imshow(np.transpose(img, (1, 2, 0)))
+            ax.imshow(np.transpose(img, (1, 2, 0)), vmin=0, vmax=1)
             ax.set_axis_off()
             ax.set_xticklabels([])
             ax.set_yticklabels([])
@@ -95,6 +95,7 @@ def _imsshow_5d(imgs, fig_size=(6,4)):
             ax[i][j].imshow(np.transpose(img, (1, 2, 0)))
             ax[i][j].set_axis_off()
     plt.show()
+    plt.close()
     return fig
 
 
