@@ -74,7 +74,7 @@ class NonAutoregressiveDescriptor(nn.Module):
         self.transformer = nn.Transformer(d_model=hid_dim, nhead=nhead, num_encoder_layers=num_encoder_layers, num_decoder_layers=num_decoder_layers, dim_feedforward=dim_feedforward, batch_first=True)
         self.start_token = nn.parameter.Parameter(data=torch.randn(hid_dim), requires_grad=True)
         self.output_embedding = nn.Linear(hid_dim, output_dim)
-        self.tgt_initial_mode = 'random' # 'positional'
+        self.tgt_initial_mode = 'positional' # 'random'
 
     def forward(self, x, description_length):
         ## [batch, w, h, dim] -> [batch, l, dim]

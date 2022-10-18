@@ -1,10 +1,12 @@
+from codecs import iterdecode
 from trainer.base_trainer import BaseTrainer
 import torch.nn as nn
 from tqdm.auto import tqdm
 from utils.utils import imsshow
 import numpy as np
 from einops import rearrange
-class SimpleTrainer(BaseTrainer):
+
+class ManualTrainer(BaseTrainer):
     def __init__(self, train_dl, valid_dl, vasf_model, optimizer, dev, loger):
         super().__init__()
         self.train_dl = train_dl
@@ -23,10 +25,10 @@ class SimpleTrainer(BaseTrainer):
         for i, batch in tqdm(enumerate(self.train_dl), total=num_iter):
             images = batch['images'].float().to(self.dev)
             self.optimizer.zero_grad()
-            vasf_result = self.model.reconstruct(images, dsc_len)
-            #commit_loss = vasf_result['commit_loss'].mean()
+            quantization_weight = self.get_quantization_weight(i)    
+            vasf_result = self.model.reconstruct(images, dsc_len, quantization_weight)
             reconstructed = vasf_result['output']
-            loss = self.criterion(reconstructed, images)# + 0*commit_loss
+            loss = self.criterion(reconstructed, images)
             if vasf_result['vq_loss'] is not None:
                 loss += vasf_result['vq_loss'].mean()
             loss.backward()
@@ -40,6 +42,18 @@ class SimpleTrainer(BaseTrainer):
                 break
     
 
+    def get_quantization_weight(self, iter_num):
+        if iter_num < 10000:
+            return 0.0
+        elif 10000 < iter_num < 20000:
+            return 0.1
+        elif 20000 < iter_num < 30000:
+            return 0.2
+        elif 30000 < iter_num < 40000:
+            return 0.3
+        else:
+            return 1.0
+    
     def visualization_validation(self, iter_num):
         loger = self.loger
         vasf_result = [None]*5

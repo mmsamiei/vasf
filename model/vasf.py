@@ -8,7 +8,7 @@ class Vasf(nn.Module):
         self.decoder_model = decoder_model
         self.quantizer = quantizer
     
-    def reconstruct(self, x, dsc_len):
+    def reconstruct(self, x, dsc_len, quantizer_weight=1):
         _, _, h, w = x.shape
         feature_map = self.feature_extractor(x)
         descriptor_result = self.descriptor(feature_map, dsc_len)
@@ -17,7 +17,8 @@ class Vasf(nn.Module):
         descriptor_tokens = descriptor_result['tokens']
         vq_commit_loss = None
         if self.quantizer is not None:
-            descriptor_tokens, indices, vq_commit_loss = self.quantizer(descriptor_tokens)
+            descriptor_tokens_qunatized, indices, vq_commit_loss = self.quantizer(descriptor_tokens)
+            descriptor_tokens = (1-quantizer_weight) * descriptor_tokens + (quantizer_weight) * descriptor_tokens_qunatized  
         decoder_result = self.decoder_model(descriptor_tokens, image_size=(h,w), token_mask=descriptor_output_mask)
         result = {
             'commit_loss': descriptor_commit_loss,
@@ -27,4 +28,4 @@ class Vasf(nn.Module):
             'masks': decoder_result['masks']
         }
         return result
-        
+
