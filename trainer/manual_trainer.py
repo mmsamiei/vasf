@@ -5,6 +5,7 @@ from tqdm.auto import tqdm
 from utils.utils import imsshow
 import numpy as np
 from einops import rearrange
+import time
 
 class ManualTrainer(BaseTrainer):
     def __init__(self, train_dl, valid_dl, vasf_model, optimizer, dev, loger):
@@ -25,7 +26,8 @@ class ManualTrainer(BaseTrainer):
         for i, batch in tqdm(enumerate(self.train_dl), total=num_iter):
             images = batch['images'].float().to(self.dev)
             self.optimizer.zero_grad()
-            quantization_weight = self.get_quantization_weight(i)    
+            quantization_weight = self.get_scheduled_quantization_weight(i)
+            dsc_len = int(self.get_scheduled_desc_len(i))
             vasf_result = self.model.reconstruct(images, dsc_len, quantization_weight)
             reconstructed = vasf_result['output']
             loss = self.criterion(reconstructed, images)
@@ -42,15 +44,31 @@ class ManualTrainer(BaseTrainer):
                 break
     
 
-    def get_quantization_weight(self, iter_num):
-        if iter_num < 10000:
+    def get_scheduled_desc_len(self, iter_num):
+        if iter_num < 200000:
+            return 1
+        elif 200000 <iter_num < 400000:
+            return (iter_num % 2)+1
+        elif 400000 <iter_num < 600000:
+            return (iter_num % 3)+1
+        else:
+            return (iter_num % 4)+1
+
+    def get_scheduled_quantization_weight(self, iter_num):
+        if iter_num < 20000:
             return 0.0
-        elif 10000 < iter_num < 20000:
-            return 0.1
         elif 20000 < iter_num < 30000:
-            return 0.2
+            return 0.05
         elif 30000 < iter_num < 40000:
+            return 0.1
+        elif 40000 < iter_num < 50000:
+            return 0.2
+        elif 50000 < iter_num < 60000:
             return 0.3
+        elif 60000 < iter_num < 70000:
+            return 0.4
+        elif 70000 < iter_num < 80000:
+            return 0.5
         else:
             return 1.0
     
@@ -70,12 +88,12 @@ class ManualTrainer(BaseTrainer):
         figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
         figure.suptitle(', '.join(str(x) for x in mses), fontsize=32)
         loger.plot(figure, f'{iter_num}_a.png')
-
         row_list = []    
         for i in range(1,5):
             for j in range(i):
                 row_list.append(vasf_result[i]['token_outputs'][:,j])
         graphs = rearrange(row_list, 'r b c h w ->r b c h w')
+        figure = graphs.detach().cpu().numpy()
         figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3))
         loger.plot(figure, f'{iter_num}_b.png')
 
@@ -87,6 +105,8 @@ class ManualTrainer(BaseTrainer):
         figure = imsshow(graphs.detach().cpu().numpy(), fig_size=(4.5,3), mode='01')
         loger.plot(figure, f'{iter_num}_c.png')
 
+        del figure
+        del graphs
 
     def _visualization_validation(self):
         loger = self.loger

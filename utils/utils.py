@@ -62,7 +62,6 @@ def imsshow_5d(imgs, fig_size=(4,6)):
          wspace=0.2, hspace=0.2, 
          top=1.-0.5/(nrow+1), bottom=0.5/(nrow+1), 
          left=0.5/(ncol+1), right=1-0.5/(ncol+1)) 
-
     fig.set_dpi(100)
     for i in range(num_rows):
         for j in range(num_img):
@@ -76,6 +75,7 @@ def imsshow_5d(imgs, fig_size=(4,6)):
             ax.set_yticklabels([])
 
     plt.show()
+    plt.close()
     return fig
 
 
