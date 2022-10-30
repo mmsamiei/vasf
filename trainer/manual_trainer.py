@@ -45,32 +45,24 @@ class ManualTrainer(BaseTrainer):
     
 
     def get_scheduled_desc_len(self, iter_num):
-        if iter_num < 200000:
+        if iter_num < 100000:
             return 1
-        elif 200000 <iter_num < 400000:
+        elif iter_num < 200000:
             return (iter_num % 2)+1
-        elif 400000 <iter_num < 600000:
+        elif iter_num < 300000:
             return (iter_num % 3)+1
         else:
             return (iter_num % 4)+1
 
     def get_scheduled_quantization_weight(self, iter_num):
-        if iter_num < 20000:
+        warm_start_step = 1000 
+        end_step = 200000
+        if iter_num < warm_start_step:
             return 0.0
-        elif 20000 < iter_num < 30000:
-            return 0.05
-        elif 30000 < iter_num < 40000:
-            return 0.1
-        elif 40000 < iter_num < 50000:
-            return 0.2
-        elif 50000 < iter_num < 60000:
-            return 0.3
-        elif 60000 < iter_num < 70000:
-            return 0.4
-        elif 70000 < iter_num < 80000:
-            return 0.5
+        elif iter_num > end_step:
+            return 1
         else:
-            return 1.0
+            return (iter_num - 50000) / (warm_start_step-end_step)
     
     def visualization_validation(self, iter_num):
         loger = self.loger
