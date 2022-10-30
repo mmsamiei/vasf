@@ -39,7 +39,7 @@ class ManualTrainer(BaseTrainer):
             if (i+1) % log_every_step == 0:
                 loger.print(f"iteration {i+1} avg loss: {np.mean(loss_history).round(4)}")
                 loss_history = []
-                self.visualization_validation(i+1)
+                self.visualization_validation(i+1, quantization_weight)
             if (i+1) == num_iter:
                 break
     
@@ -56,21 +56,21 @@ class ManualTrainer(BaseTrainer):
 
     def get_scheduled_quantization_weight(self, iter_num):
         warm_start_step = 1000 
-        end_step = 200000
+        end_step = 120000
         if iter_num < warm_start_step:
             return 0.0
         elif iter_num > end_step:
-            return 1
+            return 1.0
         else:
-            return (iter_num - 50000) / (warm_start_step-end_step)
+            return (iter_num - warm_start_step) / (end_step-warm_start_step)
     
-    def visualization_validation(self, iter_num):
+    def visualization_validation(self, iter_num, quantization_weight=1.0):
         loger = self.loger
         vasf_result = [None]*5
         self.model.eval()
         images = next(iter(self.valid_dl))['images'].float().to(self.dev)[:4]
         for i in range(1,5):
-            vasf_result[i] = self.model.reconstruct(images, i)
+            vasf_result[i] = self.model.reconstruct(images, i, quantization_weight)
         row_list = [images]
         mses = []
         for i in range(1,5):
