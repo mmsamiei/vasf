@@ -68,7 +68,7 @@ class AutoregressiveMaskedDescriptor(nn.Module):
 
 
 class NonAutoregressiveDescriptor(nn.Module):
-    def __init__(self, hid_dim, input_dim, output_dim, num_encoder_layers=1, num_decoder_layers=1, dim_feedforward=256, nhead=8):
+    def __init__(self, hid_dim, input_dim, output_dim, num_encoder_layers=2, num_decoder_layers=2, dim_feedforward=256, nhead=8):
         super().__init__()
         self.input_embedding = nn.Linear(input_dim, hid_dim)
         self.transformer = nn.Transformer(d_model=hid_dim, nhead=nhead, num_encoder_layers=num_encoder_layers, num_decoder_layers=num_decoder_layers, dim_feedforward=dim_feedforward, batch_first=True)

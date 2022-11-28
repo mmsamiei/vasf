@@ -52,7 +52,7 @@ class ManualTrainer(BaseTrainer):
         elif iter_num < 300000:
             return (iter_num % 3)+1
         else:
-            return (iter_num % 4)+1
+            return (iter_num % 3)+1 
 
     def get_scheduled_quantization_weight(self, iter_num):
         warm_start_step = 1000 
